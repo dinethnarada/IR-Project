@@ -30,7 +30,8 @@
                             <div class="row">
                                 <div class="col-xs-8 col-xs-offset-2">
                                     <div class="input-group mb-3">
-                                        <input type="text" name="message" class="form-control" id="message" placeholder="විමසුම ඇතුලත් කරන්න"></input>
+                                        <input type="text" name="message" class="form-control" id="message"
+                                            placeholder="විමසුම ඇතුලත් කරන්න"></input>
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="submit">
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -38,15 +39,53 @@
                                             </button>
                                         </span>
                                     </div>
+                                    <br>
                                     <input type="checkbox" id="biography" name="biography" value="biography">
-							        <label for="biography">සෙවීමේදී චරිතාපදානය ඇතුළත් කරන්න </label><br>
+                                    <label for="biography">සෙවීමේදී චරිතාපදානය ඇතුළත් කරන්න </label><br>
                                 </div>
                             </div>
                             <div class="row">
-                                
+
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="result">
+                    <div class="page-header" style="margin-top: 0px !important">
+                        <h3>ප්‍රතිඵල(Results)</h3>
+                    </div>
+                    <div>
+                        {% if res == None %}
+                        <h5> ප්‍රතිඵල මෙහි දිස්වනු ඇත. </h5>
+                        {% else %}
+                        <p class="bio text-center">විමසුම: '<b>{{ message }}</b>' <br></p>
+                        <p class="bio text-center">සුදුසු ප්‍රතිඵල {{ num_results }}ක් හමුවිය</p>
+                        <br>
+                        {% for i in res %}
+                        {% if len == 2 %}
+                        <p>{{ i[0] }} ({{ i[1] }})</p>
+                        {% elif len == 3 %}
+                        <p><b>{{ i[0] }}</b></p>
+                        <p class="bio">{{ i[1] }}</p>
+                        <p class="score">{{ i[2] }}</p>
+                        {% elif len > 3 %}
+                        <p><b>{{ i[0] }}</b></p>
+                        <p class="bio">තනතුර: {{ i[1] }}</p>
+                        <p class="bio">පක්ෂය: {{ i[2] }}</p>
+                        <p class="bio">දිස්ත්‍රික්කය: {{ i[3] }}</p>
+                        <p class="bio">ඇමතුම්: {{ i[4] }}</p>
+                        <p class="bio">විෂයයන්: {{ i[5] }}</p>
+                        <p class="bio">චරිතාපදානය: {{ i[6] }}</p>
+                        {% else %}
+                        <p>{{ i }}</p>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

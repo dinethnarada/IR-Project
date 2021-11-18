@@ -61,9 +61,35 @@ def searchByName(tokens):
     else:
         return False
 
+def yearClassifier(tokens,flags,dob_flag,num):
+    #containsDigit = bool(re.search(r'\d', processed_phrase))
+    for each_token in tokens:
+        if len(each_token) == 4 and each_token.isnumeric():
+            containsDigit = False
+            flags[9] = 5
+            dob_flag = True
+            break
+        elif each_token.isnumeric():
+            containsDigit = True
+            num = each_token
+            break
+        else:
+            containsDigit = False
+    return containsDigit,flags,dob_flag,num
+
 
 def search_bio(phrase):
-    flags = [0, 1, 1, 1, 1, 1, 5]
+    # 0 - number
+    # 1 - name
+    # 2 - position
+    # 3 - party
+    # 4 - district
+    # 5 - related_subjects
+    # 6 - biography
+    # 7 - overall_rank
+    # 8 - party_rank
+    # 9 - dob
+    flags = [0, 1, 1, 1, 1, 1, 5, 1, 1, 1]
     fields = boost(flags)
     tokens = phrase.split()
     for t in range(len(tokens)):
@@ -112,19 +138,8 @@ def search(phrase):
     search_by_name = searchByName(tokens)
     tokens = list(set(tokens))
     dob_flag = False
-    #containsDigit = bool(re.search(r'\d', processed_phrase))
-    for each_token in tokens:
-        if len(each_token) == 4 and each_token.isnumeric():
-            containsDigit = False
-            flags[9] = 5
-            dob_flag = True
-            break
-        elif each_token.isnumeric():
-            containsDigit = True
-            num = each_token
-            break
-        else:
-            containsDigit = False
+
+    containsDigit,flags,dob_flag,num = yearClassifier(tokens,flags,dob_flag,num)
 
     if search_by_name:
         flags[1] = 5

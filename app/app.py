@@ -21,16 +21,20 @@ def predictTokens():
                 length = len(res[0])
                 num_results = len(res)
         else:
-            res = search(message)
-            if (len(res) == 0):
-                res = ["ප්‍රතිඵල කිසිවක් හමු නොවීය.."]
-                length = 0
-            elif isinstance(res[0],list):
-                length = len(res[0])
-                num_results = len(res)
+            if(len(message) != 0):
+                res = search(message)
+                if (len(res) == 0):
+                    res = ["ප්‍රතිඵල කිසිවක් හමු නොවීය.."]
+                    length = 0
+                elif isinstance(res[0],list):
+                    length = len(res[0])
+                    num_results = len(res)
+                else:
+                    length = 1
+                    num_results = len(res)
             else:
-                length = 1
-                num_results = len(res)
+                res = None
+                length = 0
         # tokens = []
     return render_template('ui.html', res = res, len = length, num_results = num_results, message = message)
 
