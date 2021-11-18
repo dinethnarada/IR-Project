@@ -293,14 +293,15 @@ all_lists = [positions, parties, districts, related_subjects]
 
 syn_rel_subjects = ["විෂයයන්", "පථයන්", "මාතෘකා"]
 syn_position = ["තනතුර", "ධුර", "ධුරය", "නිලය", "පදවිය", "තරාතිරම", "තානාන්තරය", "තැන"]
-syn_party = ["කණ්ඩායම", "පක්ෂය", "පාර්ශ්වය", "කණ්ඩායම"]
+syn_party = ["කණ්ඩායම", "පක්ෂය", "පාර්ශ්වය", "කණ්ඩායම","පක්ශය"]
 syn_districts = ["දිස්ත්‍රික්කය","පළාත", "ප්‍රදේශය"]
 syn_contact = ["සම්බන්ධ", "දුරකථන", "දුරකතන" ,"අංකය", "ඇමතුම්"]
 syn_participation = ["නියෝජනය", "සහභාගි", "වාර", " ගණන"]
+synonym_list = [syn_position, syn_party, syn_districts, syn_rel_subjects, syn_contact, syn_participation]
+
 syn_overall_rank = ["ස්ථාන​ය"]
 syn_party_rank = ["ස්ථානය"]
 rank_list = [syn_overall_rank,syn_party_rank]
-synonym_list = [syn_position, syn_party, syn_districts, syn_rel_subjects, syn_contact, syn_participation]
 
 fields_ori = ["position","party","district","related_subjects","telephone","participated_in_parliament","overall_rank","party_rank","dob"]
 

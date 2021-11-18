@@ -77,6 +77,16 @@ def yearClassifier(tokens,flags,dob_flag,num):
             containsDigit = False
     return containsDigit,flags,dob_flag,num
 
+def boostFields(tokens,synonym_list,search_list):
+    for word in tokens:
+            for i in range(len(synonym_list)):
+                if word in synonym_list[i]:
+                    print('Boosting field', i, 'for', word,
+                          'in synonym list - search by name')
+                    search_list[i] = 1
+                    break
+
+    return search_list
 
 def search_bio(phrase):
     # 0 - number
@@ -98,6 +108,8 @@ def search_bio(phrase):
             if calSimilarity_words(token, p, 0.8):
                 tokens.append(p)
     phrase = " ".join(tokens)
+    print(phrase)
+    print(fields)
     query_body = queries.agg_multi_match_q(phrase, fields, operator='or')
     print('Making Faceted Query')
     res = client.search(index=INDEX, body=query_body)
@@ -143,21 +155,11 @@ def search(phrase):
 
     if search_by_name:
         flags[1] = 5
-        for word in tokens:
-            for i in range(len(synonym_list)):
-                if word in synonym_list[i]:
-                    print('Boosting field', i, 'for', word,
-                          'in synonym list - search by name')
-                    search_list[i] = 1
-                    break
+        search_list = boostFields(tokens,synonym_list,search_list)
+
     elif dob_flag:
-        for word in tokens:
-            for i in range(len(synonym_list)):
-                if word in synonym_list[i]:
-                    print('Boosting field', i, 'for', word,
-                          'in synonym list - search by name')
-                    search_list[i] = 1
-                    break
+        search_list = boostFields(tokens,synonym_list,search_list)
+
     elif containsDigit:
         #print("In contains digit")
         flags[0] = 1
@@ -301,8 +303,9 @@ def search(phrase):
                         [hit['_source']['name']+" - " + str(out), hit['_score']])
                 res = outputl
 
-    else:
-        if dob_flag == True:
+    else: 
+        if dob_flag == True: # birth year related queries
+            print(search_list.index(1))
             required_field = fields_ori[search_list.index(1)]
             print("exact match with "+required_field)
             query_body = queries.exact_match(phrase, 'dob', required_field)
