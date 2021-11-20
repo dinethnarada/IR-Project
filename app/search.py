@@ -285,7 +285,7 @@ def search(phrase):
                 resl = res['hits']['hits']
                 outputl = []
                 for hit in resl:
-                  outputl.append(hit['_source']['name']+" ("+ str(hit['_source']['telephone']) +" වතාවක්)")
+                    outputl.append(hit['_source']['name'])
                 res = outputl
             else:
                 required_field = 'name'
@@ -301,7 +301,7 @@ def search(phrase):
                     else:
                         out = ansl[0]
                     outputl.append(
-                        [hit['_source']['name']+" - " + str(out), hit['_score']])
+                        hit['_source']['name'])
                 res = outputl
 
     else: 
@@ -324,7 +324,7 @@ def search(phrase):
                 else:
                     out = ansl[0]
                 outputl.append(
-                    [hit['_source']['name'], hit['_score']])
+                    [hit['_source']['name'], str(out)])
             res = outputl
         else:
             print('Making Faceted Query')
@@ -340,7 +340,7 @@ def search(phrase):
                 else:
                     out = ansl
                 outputl.append(
-                    [hit['_source']['name']+" - " + str(out), hit['_score']])
+                    [hit['_source']['name'], str(out)])
             res = outputl
     return res
 
