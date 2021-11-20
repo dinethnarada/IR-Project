@@ -1,6 +1,9 @@
 # virtual environment
 venv
 
+# Docker image
+Elastic_search
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

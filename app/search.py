@@ -77,6 +77,16 @@ def yearClassifier(tokens,flags,dob_flag,num):
             containsDigit = False
     return containsDigit,flags,dob_flag,num
 
+def boostFields(tokens,synonym_list,search_list):
+    for word in tokens:
+            for i in range(len(synonym_list)):
+                if word in synonym_list[i]:
+                    print('Boosting field', i, 'for', word,
+                          'in synonym list - search by name')
+                    search_list[i] = 1
+                    break
+
+    return search_list
 
 def search_bio(phrase):
     # 0 - number
@@ -98,6 +108,8 @@ def search_bio(phrase):
             if calSimilarity_words(token, p, 0.8):
                 tokens.append(p)
     phrase = " ".join(tokens)
+    print(phrase)
+    print(fields)
     query_body = queries.agg_multi_match_q(phrase, fields, operator='or')
     print('Making Faceted Query')
     res = client.search(index=INDEX, body=query_body)
@@ -140,26 +152,18 @@ def search(phrase):
     dob_flag = False
 
     containsDigit,flags,dob_flag,num = yearClassifier(tokens,flags,dob_flag,num)
-
+    print(tokens)
     if search_by_name:
+        print("Search By Name")
         flags[1] = 5
-        for word in tokens:
-            for i in range(len(synonym_list)):
-                if word in synonym_list[i]:
-                    print('Boosting field', i, 'for', word,
-                          'in synonym list - search by name')
-                    search_list[i] = 1
-                    break
+        search_list = boostFields(tokens,synonym_list,search_list)
+
     elif dob_flag:
-        for word in tokens:
-            for i in range(len(synonym_list)):
-                if word in synonym_list[i]:
-                    print('Boosting field', i, 'for', word,
-                          'in synonym list - search by name')
-                    search_list[i] = 1
-                    break
+        print("Saerch by Birth year")
+        search_list = boostFields(tokens,synonym_list,search_list)
+
     elif containsDigit:
-        #print("In contains digit")
+        print("Search by contains digit")
         flags[0] = 1
         #popularity = False
         participation = False
@@ -179,10 +183,9 @@ def search(phrase):
                         flags[8] = 5
         if flags[8] != 5 and flags[3] != 5:
           flags[7] = 5
-        
-        print("BBBBBB"+ str(flags))
-
+    
     else:
+        print("Search by others")
         # Identify numbers
         search_terms = []
         for w in range(len(tokens)):
@@ -301,9 +304,14 @@ def search(phrase):
                         [hit['_source']['name']+" - " + str(out), hit['_score']])
                 res = outputl
 
-    else:
-        if dob_flag == True:
-            required_field = fields_ori[search_list.index(1)]
+    else: 
+        if dob_flag == True: # birth year related queries
+            isAllZero = isListZero(search_list)
+            print(isAllZero)
+            if isAllZero == True:
+                required_field = "name"
+            else:
+                required_field = fields_ori[search_list.index(1)]
             print("exact match with "+required_field)
             query_body = queries.exact_match(phrase, 'dob', required_field)
             res = client.search(index=INDEX, body=query_body)
@@ -316,7 +324,7 @@ def search(phrase):
                 else:
                     out = ansl[0]
                 outputl.append(
-                    [hit['_source']['name']+" - " + str(out), hit['_score']])
+                    [hit['_source']['name'], hit['_score']])
             res = outputl
         else:
             print('Making Faceted Query')
@@ -336,24 +344,10 @@ def search(phrase):
             res = outputl
     return res
 
-# def search(phrase):
-#   required_field = 'telephone'
-#   query_body = queries.exact_match(phrase, required_field)
-#   res = client.search(index=INDEX, body=query_body)
-#   resl = res['hits']['hits']
-#   outputl = []
-#   for hit in resl:
-#     outputl.append(hit['_source']['name']+" ("+ str(hit['_source']['telephone']) +" වතාවක්)")
-#   res = outputl
-#   return res
-
-# def search(phrase):
-#   #required_field = 'telephone'
-#   query_body = queries.agg_multi_match_and_sort_q(phrase)
-#   res = client.search(index=INDEX, body=query_body)
-#   resl = res['hits']['hits']
-#   outputl = []
-#   for hit in resl:
-#     outputl.append(hit['_source']['name']+" ("+ str(hit['_source']['telephone']) +" වතාවක්)")
-#   res = outputl
-#   return res
+def isListZero(search_list):
+    for value in search_list:
+        if value == 1:
+            return False
+            break
+    return True
+        
