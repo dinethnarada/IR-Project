@@ -117,7 +117,7 @@ def search_bio(phrase):
     outputl = []
     for hit in resl:
         outputl.append([hit['_source']['name'], hit['_source']
-                       ['biography'], hit['_score']])
+                       ['biography']])
     res = outputl
     return res
 
@@ -227,9 +227,7 @@ def search(phrase):
         if search_list.count(1) > 0:
             required_field = fields_ori[search_list.index(1)]
             print("exact match with "+required_field)
-            query_body = queries.exact_match(phrase, 'name', required_field)
-            res = client.search(index=INDEX, body=query_body)
-            resl = res['hits']['hits']
+            resl = exactMatch(phrase, 'name', required_field,None)
             outputl = []
             for hit in resl:
                 ansl = hit["fields"][required_field]
@@ -241,9 +239,7 @@ def search(phrase):
                     [hit['_source']['name']+" - " + str(out), hit['_score']])
             res = outputl
         else:
-            query_body = queries.exact_match(phrase)
-            res = client.search(index=INDEX, body=query_body)
-            resl = res['hits']['hits']
+            resl = exactMatch(phrase,None,None,None)
             outputl = []
             for hit in resl:
                 minister = hit['_source']
@@ -261,10 +257,7 @@ def search(phrase):
         if participation:
             print("participation exact match")
             required_field = "participated_in_parliament"
-            query_body = queries.exact_match(
-                phrase, required_field, search_val=int(num))
-            res = client.search(index=INDEX, body=query_body)
-            resl = res['hits']['hits']
+            resl = exactMatch(phrase, None, required_field, search_val=int(num))
             outputl = []
             for hit in resl:
                 outputl.append(
@@ -272,12 +265,6 @@ def search(phrase):
             res = outputl
         else:
             if flags.count(5) == 2:
-                # required_field = []
-                # for each_flag in range(len(flags)):
-                #     if flags[each_flag] == 5:
-                #         required_field.append(fields_ori[each_flag-2])
-                # print("cross")
-                # print(required_field)
                 phrase = similar_words[0] + " " + num
                 print(phrase)
                 query_body = queries.agg_multi_match_and_sort_q(phrase)
@@ -285,14 +272,12 @@ def search(phrase):
                 resl = res['hits']['hits']
                 outputl = []
                 for hit in resl:
-                  outputl.append(hit['_source']['name']+" ("+ str(hit['_source']['telephone']) +" වතාවක්)")
+                    outputl.append(hit['_source']['name'])
                 res = outputl
             else:
                 required_field = 'name'
                 print("exact match with "+required_field)
-                query_body = queries.exact_match(num, 'overall_rank', required_field)
-                res = client.search(index=INDEX, body=query_body)
-                resl = res['hits']['hits']
+                resl = exactMatch(num, 'overall_rank', required_field,None)
                 outputl = []
                 for hit in resl:
                     ansl = hit["fields"][required_field]
@@ -301,7 +286,7 @@ def search(phrase):
                     else:
                         out = ansl[0]
                     outputl.append(
-                        [hit['_source']['name']+" - " + str(out), hit['_score']])
+                        hit['_source']['name'])
                 res = outputl
 
     else: 
@@ -310,21 +295,30 @@ def search(phrase):
             print(isAllZero)
             if isAllZero == True:
                 required_field = "name"
+                print("exact match with "+required_field)
+                resl = exactMatch(phrase, 'dob', required_field,None)
+                outputl = []
+                for hit in resl:
+                    ansl = hit["fields"][required_field]
+                    if (len(ansl) > 1):
+                        out = " ; ".join(ansl)
+                    else:
+                        out = ansl[0]
+                    outputl.append(
+                        hit['_source']['name'])
             else:
                 required_field = fields_ori[search_list.index(1)]
-            print("exact match with "+required_field)
-            query_body = queries.exact_match(phrase, 'dob', required_field)
-            res = client.search(index=INDEX, body=query_body)
-            resl = res['hits']['hits']
-            outputl = []
-            for hit in resl:
-                ansl = hit["fields"][required_field]
-                if (len(ansl) > 1):
-                    out = " ; ".join(ansl)
-                else:
-                    out = ansl[0]
-                outputl.append(
-                    [hit['_source']['name'], hit['_score']])
+                print("exact match with "+required_field)
+                resl = exactMatch(phrase, 'dob', required_field,None)
+                outputl = []
+                for hit in resl:
+                    ansl = hit["fields"][required_field]
+                    if (len(ansl) > 1):
+                        out = " ; ".join(ansl)
+                    else:
+                        out = ansl[0]
+                    outputl.append(
+                        [hit['_source']['name'], str(out)])
             res = outputl
         else:
             print('Making Faceted Query')
@@ -340,7 +334,7 @@ def search(phrase):
                 else:
                     out = ansl
                 outputl.append(
-                    [hit['_source']['name']+" - " + str(out), hit['_score']])
+                    [hit['_source']['name'], str(out)])
             res = outputl
     return res
 
@@ -350,4 +344,11 @@ def isListZero(search_list):
             return False
             break
     return True
+
+def exactMatch(query, field_name, required_field,search_val):
+    print(query,field_name,required_field,search_val)
+    query_body = queries.exact_match(query, field_name, required_field, search_val)
+    res = client.search(index=INDEX, body=query_body)
+    resl = res['hits']['hits']
+    return resl
         

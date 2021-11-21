@@ -73,7 +73,10 @@
                                 {% if len == 0 %}
                                     <p>{{ i }}</p>
                                 {% elif len == 2 %}
-                                    <p class="name">{{ i[0] }} ({{ i[1] }})</p>
+                                    <p class="name">{{ i[0] }}</p>
+                                    <ul>
+                                        <li>{{ i[1] }}</li>
+                                    </ul>
                                 {% elif len == 3 %}
                                     <p><b>{{ i[0] }}</b></p>
                                     <p class="bio name">{{ i[1] }}</p>
@@ -87,7 +90,7 @@
                                     <p class="bio">විෂයයන්: {{ i[5] }}</p>
                                     <p class="bio">චරිතාපදානය: {{ i[6] }}</p>
                                 {% else %}
-                                    <p>{{ i }}</p>
+                                    <p class="name">{{ i }}</p>
                                 {% endif %}
                                 <hr>
                             {% endfor %}

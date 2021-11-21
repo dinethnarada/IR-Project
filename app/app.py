@@ -10,9 +10,9 @@ def home():
 @app.route('/predictTokens',methods=['POST'])
 def predictTokens():
     if request.method == 'POST':
-        message = request.form['message']
-        num_results = 0
-        try:
+            message = request.form['message']
+            num_results = 0
+        # try:
             if request.form.get('biography'):
                 res = search_bio(message)
                 if (len(res) == 0):
@@ -36,9 +36,9 @@ def predictTokens():
                 else:
                     res = None
                     length = 0
-        except:
-            res = ["මෙම යෙදුම නිරවද්‍ය නොවේ. කරුණාකර වෙනත් සුදුසු යෙදුමක් ඇතුලත් කරන්​න"]
-            length = 0
+        # except:
+        #     res = ["මෙම යෙදුම නිරවද්‍ය නොවේ. කරුණාකර වෙනත් සුදුසු යෙදුමක් ඇතුලත් කරන්​න"]
+        #     length = 0
         # tokens = []
     return render_template('ui.html', res = res, len = length, num_results = num_results, message = message)
 
