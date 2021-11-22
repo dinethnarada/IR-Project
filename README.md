@@ -60,3 +60,5 @@ pip install flask
 ```
 7. Run command ```python data_upload.py```
 8. Run command ```flask run```
+
+For the Data Scraping use the spider files in the scrape folder.
