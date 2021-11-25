@@ -243,15 +243,18 @@ def search(phrase):
             outputl = []
             for hit in resl:
                 minister = hit['_source']
+                print(minister)
                 name = minister["name"]
                 position = minister["position"]
                 party = minister["party"]
                 district = minister["district"]
                 contact = ";".join(minister["telephone"])
+                party_rank = minister["party_rank"]
+                over_rank = minister["overall_rank"]
                 related_subjects = ";".join(minister["related_subjects"])
                 biography = minister["biography"]
                 outputl.append([name, position, party, district,
-                               contact, related_subjects, biography])
+                               contact, party_rank, over_rank, related_subjects, biography])
             res = outputl
     elif flags[0] == 1:
         if participation:
