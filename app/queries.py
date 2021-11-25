@@ -3,7 +3,7 @@ import json
 from helper import calSimilarity
 
 
-def agg_multi_match_q(query, fields=['title', 'song_lyrics'], operator='and'):
+def agg_multi_match_q(query, fields=['name'], operator='and'):
     q = {
         "size": 500,
         "explain": True,

@@ -210,11 +210,6 @@ def search(phrase):
                     print('Boosting field', i, 'for', word, 'in synonym list')
                     flags[i+2] = 5
 
-            # Check whether full phrase is in any list - NEED THIS?
-            # for i in range(2, 9):
-            #     if phrase in all_lists[i]:
-            #         print('Boosting field', i, 'for', phrase, 'in all list')
-            #         flags[i] = 5
         tokens = search_terms
 
     fields = boost(flags)
@@ -236,22 +231,25 @@ def search(phrase):
                 else:
                     out = ansl[0]
                 outputl.append(
-                    [hit['_source']['name']+" - " + str(out), hit['_score']])
+                    [hit['_source']['name'] , str(out)])
             res = outputl
         else:
             resl = exactMatch(phrase,None,None,None)
             outputl = []
             for hit in resl:
                 minister = hit['_source']
+                print(minister)
                 name = minister["name"]
                 position = minister["position"]
                 party = minister["party"]
                 district = minister["district"]
                 contact = ";".join(minister["telephone"])
+                party_rank = minister["party_rank"]
+                over_rank = minister["overall_rank"]
                 related_subjects = ";".join(minister["related_subjects"])
                 biography = minister["biography"]
                 outputl.append([name, position, party, district,
-                               contact, related_subjects, biography])
+                               contact, party_rank, over_rank, related_subjects, biography])
             res = outputl
     elif flags[0] == 1:
         if participation:
@@ -265,7 +263,7 @@ def search(phrase):
             res = outputl
         else:
             if flags.count(5) == 2:
-                phrase = similar_words[0] + " " + num
+                phrase = " ".join(list(set(similar_words))) + " " + num
                 print(phrase)
                 query_body = queries.agg_multi_match_and_sort_q(phrase)
                 res = client.search(index=INDEX, body=query_body)
